@@ -1,0 +1,44 @@
+#!/bin/sh
+#PBS -N q_name
+#PBS -l nodes=1:ppn=1
+#PBS -o q_name_log.$PBS_JOBID
+#PBS -e q_name_out.$PBS_JOBID
+#PBS -l walltime=1000:00:00
+#PBS -W depend=afterok:all_jobID
+#PBS -q batch
+cd $PBS_O_WORKDIR
+
+# Chaining
+find ./q_name/chain/ -name "*.chain" | chainMergeSort -inputList=stdin | gzip -c >./q_name/all.chain.gz
+chainPreNet ./q_name/all.chain.gz ./reference/t.sizes ./q_name/q.sizes ./q_name/all.pre.chain
+# Netting
+chainNet ./q_name/all.pre.chain -minSpace=1 ./reference/t.sizes ./q_name/q.sizes stdout /dev/null | netSyntenic stdin  ./q_name/noClass.net
+# format transformation
+netToAxt ./q_name/noClass.net ./q_name/all.pre.chain ./reference/t.2bit ./q_name/q.2bit stdout | axtSort stdin q_name/sorted_t-q.axt 
+axtToMaf ./q_name/sorted_t-q.axt ./reference/t.sizes ./q_name/q.sizes ./q_name/q_name.maf
+
+maf-convert sam ./q_name/q_name.maf >./q_name/q_name.sam
+samtools view -bt ./reference/t.fa.fai ./q_name/q_name.sam>./q_name/q_name.bam
+samtools sort ./q_name/q_name.bam  ./q_name/sort-q_name
+samtools index ./q_name/sort-q_name.bam
+
+bamToBed -i ./q_name/sort-q_name.bam  > ./q_name/q_name.bed
+sort -k1,1 -k2,2n ./q_name/q_name.bed > ./q_name/sort-q_name.bed
+bedtools merge -i ./q_name/sort-q_name.bed > ./q_name/merge-sort-q_name.bed
+# Coverage counting
+coverageBed -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/noncoding.bed -hist >q_name/non-cov
+coverageBed -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/CDS.bed -hist >q_name/coding-cov
+coverageBed -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/intron.bed -hist >q_name/intron-cov
+coverageBed -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/intergenic.bed -hist >q_name/intergenic-cov
+coverageBed -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/5UTR.bed -hist >q_name/5UTR-cov
+coverageBed -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/3UTR.bed -hist >q_name/3UTR-cov
+
+bedtools intersect -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/noncoding.bed >q_name/non-cov.bed
+bedtools intersect -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/CDS.bed >q_name/coding-cov.bed
+bedtools intersect -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/intron.bed >q_name/intron-cov.bed
+bedtools intersect -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/intergenic.bed  >q_name/intergenic-cov.bed
+bedtools intersect -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/5UTR.bed  >q_name/5UTR-cov.bed
+bedtools intersect -a q_name/merge-sort-q_name.bed -b ~/xin/new/fenlei/3UTR.bed  >q_name/3UTR-cov.bed
+# Screen out
+maf_sort ./q_name/q_name.maf  Osativa >./q_name/q_name.orig.maf
+single_cov2 ./q_name/q_name.orig.maf R=Osativa >./reference/tba/Osativa.q_name.sing.maf

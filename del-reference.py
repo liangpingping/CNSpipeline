@@ -1,18 +1,21 @@
-#!/usr/lib/python
+#!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-##-------------------------------------------------------------------------------------------------
+##---------------------------------------------------------------------------------------------
 
-##    This script refers to dealing with reference genome
-
-## NB:based on last-759
-##-------------------------------------------------------------------------------------------------
+## This script is used to deal with the reference genome
+##
+## Usages:
+##      python *.py reference_genome.fa
+##
+## NB: based on last-759
+## this script will creat one directory name reference.
+## Dependencies: Biopython, LAST
+##               
+##---------------------------------------------------------------------------------------------
 import sys
-sys.path.append('/share/workplace/software/python-packages/biopython')
 from Bio import SeqIO
 import os
-from datetime import *
-
 
 target=sys.argv[1]
 t_abspath=os.path.abspath(target)
@@ -39,7 +42,7 @@ def deal_target():
     os.system('rm ./reference/t1.fa ./reference/tba/%s.fa'%(t_name)) 
 	
 def lastdb():
-    os.system('/share/workplace/home/ping/software/last-759/bin/lastdb -uMAM8 -P10 ./reference/tdb  ./reference/t.fa \n' )
+    os.system('lastdb -uMAM8 -P10 ./reference/tdb  ./reference/t.fa \n' )
     os.system('samtools faidx ./reference/t.fa \n' )
 
 def trans():
@@ -49,23 +52,9 @@ def trans():
     os.system('faSize ./reference/t.fa -detailed > ./reference/t.sizes')
 
 def main():
-    start1=datetime.now()
     deal_target()
     lastdb()
     trans()
-    end1=datetime.now()
-    print 'lastdb uses'+ str(end1-start1) 
 
 if __name__=='__main__': 
-    start=datetime.now()
-    print 'whole program starts at' + str(start)
     main()
-    end=datetime.now()
-    print 'whole program ends at' + str(end)
-    print 'totally uses ' + str(end-start)	
-	
-
-
-
-
-
