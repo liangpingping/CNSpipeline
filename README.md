@@ -14,19 +14,19 @@ Usage:
    
 3. Run programs
 
-     Step1: Prepare reference sequences for subsequent alignment
+     Step1: Prepare reference sequences for subsequent alignment.
 
              python del-reference.py reference_genome.fa
 
-     Step2: Pairwise alignment and polish the alignment	 
+     Step2: Pairwise alignment and polish the alignment.
 
              python del-query.py query_genome.fa number_of_thread
 
-     Step3: Multiple pairwise
+     Step3: Multiple pairwise.
 
-             roast X=0 	E=reference-species species-guid-tree maf-source destination 
+             roast X=0 E=reference-species species-guid-tree maf-source destination 
 
-     Step4: Calculating the score of each base
+     Step4: Calculating the score of each base.
 
              python score-for-bases.py multiple_pairwise num_species
  
