@@ -1,8 +1,6 @@
-# CNSpipeline
-
 Usage:
 
-1. Dependencies:
+1. Dependencies
 
        LAST, Biopython, Samtools, UCSC Kent Utilities, ROAST  
    
