@@ -39,7 +39,26 @@ def main():
         match=list1.split(',')[3]
         end_os=str(int(start_os)+int(match))
         seq_os=list1.split(',')[6]
-  
+        f3.write('fixedStep'+'\t'+'chrom='+chr_os+'\t'+'start='+str(start_os+1)+'\t'+'step=1'+'\n')
+        for j in range(len(seq_os)):
+            num=0
+            if seq_os[j]!='-':
+                start_os+=1
+                for a in list[2:]:
+                    a=','.join(a.split())
+                    if a != '':
+                        # name1=a.split(',')[1]
+                        # beg=a.split(',')[2]
+                        # num=a.split(',')[3]
+                        seq1=a.split(',')[6]
+                        if seq1[j]!='-':
+                            num+=1
+            else:
+                continue
+            score=num/int(num_species)
+            f3.write(str(score)+'\n')
+            f1.write(chr_os+'\t'+str(start_os-1)+'\t'+str(start_os)+'\t'+str(score)+'\t'+str(num)+'\n')
+
     f1.close()
     f2.close()
     f3.close()

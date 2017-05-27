@@ -37,6 +37,19 @@ def deal_target():
     tf1.close()
     tf2.close()
     tf22.close()	
+    os.system('fold -w 70 ./reference/t1.fa > ./reference/t.fa') 
+    os.system('fold -w 70 ./reference/tba/%s.fa >./reference/tba/%s'%(t_name,t_name)) 
+    os.system('rm ./reference/t1.fa ./reference/tba/%s.fa'%(t_name)) 
+	
+def lastdb():
+    os.system('lastdb -uMAM8 -P10 ./reference/tdb  ./reference/t.fa \n' )
+    os.system('samtools faidx ./reference/t.fa \n' )
+
+def trans():
+    os.system('faSplit byname ./reference/t.fa ./reference/Nib_t/')
+    os.system('faToTwoBit ./reference/t.fa ./reference/t.2bit') 
+    os.system('for i in ./reference/Nib_t/*; do faToNib $i `echo $i | sed -e s/.fa/.nib/`; done')  
+    os.system('faSize ./reference/t.fa -detailed > ./reference/t.sizes')
 
 def main():
     deal_target()

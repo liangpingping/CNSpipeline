@@ -2,7 +2,7 @@ Usage:
 
 1. Dependencies
 
-         
+       LAST, Biopython, Samtools, UCSC Kent Utilities, ROAST  
    
 2. Install CNSpipeline
 
@@ -22,7 +22,7 @@ Usage:
 
      Step3: Multiple pairwise.
 
-              
+             roast X=0 E=reference-species species-guid-tree maf-source destination 
 
      Step4: Calculating the score of each base.
 
