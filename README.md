@@ -12,7 +12,7 @@ Usage:
    
 3. Run programs
 
-     Step1: Prepare reference sequences for subsequent alignment.
+     Step1: Prepare reference genome for subsequent alignment.
 
              python del-reference.py reference_genome.fa
 
@@ -27,4 +27,8 @@ Usage:
      Step4: Calculating the score of each base.
 
              python score-for-bases.py multiple_pairwise num_species
- 
+			 
+	 Step5: Give a cutoff value to get CNSs according to the coverage of CDS in reference genome.
+	 
+	         python get-cns.py score-file CDS-file cutoff
+			 
