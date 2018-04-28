@@ -5,7 +5,7 @@
 ##
 ## Usages:
 ##
-##        python *.py query_genome.fa number_of_thread
+##        python *.py query_genome.fa number_of_thread reference_genome_name
 ##
 ##------------------------------------------------------------------------------------------------
 
@@ -22,6 +22,7 @@ q_abspath=os.path.abspath(query)
 q_fullname=os.path.basename(query)
 q_name=os.path.splitext(q_fullname)[0]
 threads=sys.argv[2]	
+reference_genome_name=sys.argv[3]	
 	
 os.system('mkdir -p ./%s/chain ./%s/maf  ./%s/Nib_q '%(q_name,q_name,q_name))
 	
@@ -87,23 +88,10 @@ def others():
     os.system('bamToBed -i ./%s/sort-%s.bam  > ./%s/%s.bed'%(q_name,q_name,q_name,q_name))
     os.system('sort -k1,1 -k2,2n ./%s/%s.bed > ./%s/sort-%s.bed'%(q_name,q_name,q_name,q_name))
     os.system('bedtools merge -i ./%s/sort-%s.bed > ./%s/merge-sort-%s.bed'%(q_name,q_name,q_name,q_name))
-    # Coverage counting
-    os.system('coverageBed -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/noncoding.bed -hist >%s/non-cov'%(q_name,q_name,q_name))
-    os.system('coverageBed -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/CDS.bed -hist >%s/coding-cov'%(q_name,q_name,q_name))
-    os.system('coverageBed -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/intron.bed -hist >%s/intron-cov'%(q_name,q_name,q_name))
-    os.system('coverageBed -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/intergenic.bed -hist >%s/intergenic-cov'%(q_name,q_name,q_name))
-    os.system('coverageBed -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/5UTR.bed -hist >%s/5UTR-cov'%(q_name,q_name,q_name))
-    os.system('coverageBed -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/3UTR.bed -hist >%s/3UTR-cov'%(q_name,q_name,q_name))
-
-    os.system('bedtools intersect -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/noncoding.bed >%s/non-cov.bed'%(q_name,q_name,q_name))
-    os.system('bedtools intersect -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/CDS.bed >%s/coding-cov.bed'%(q_name,q_name,q_name))
-    os.system('bedtools intersect -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/intron.bed >%s/intron-cov.bed'%(q_name,q_name,q_name))
-    os.system('bedtools intersect -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/intergenic.bed  >%s/intergenic-cov.bed'%(q_name,q_name,q_name))
-    os.system('bedtools intersect -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/5UTR.bed  >%s/5UTR-cov.bed'%(q_name,q_name,q_name))
-    os.system('bedtools intersect -a %s/merge-sort-%s.bed -b ~/xin/new/fenlei/3UTR.bed  >%s/3UTR-cov.bed'%(q_name,q_name,q_name))
+    
     # Screen out
     os.system('maf_sort ./%s/%s.maf  Osativa >./%s/%s.orig.maf'%(q_name,q_name,q_name,q_name))
-    os.system('single_cov2 ./%s/%s.orig.maf R=Osativa >./reference/tba/Osativa.%s.sing.maf'%(q_name,q_name,q_name))
+    os.system('single_cov2 ./%s/%s.orig.maf R=%s >./reference/tba/Osativa.%s.sing.maf'%(q_name,q_name,reference_genome_name,q_name))
 
 def main():
     deal_query()
