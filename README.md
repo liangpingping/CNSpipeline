@@ -14,11 +14,11 @@
 
      Step1: Prepare reference genome for subsequent alignment.
 
-             python del-reference.py reference_genome.fa
+             python del-reference.py reference_genome.fa reference_genome_name
 
      Step2: Pairwise alignment and polish the alignment.
 
-             python del-query.py query_genome.fa number_of_thread
+             python del-query.py query_genome.fa number_of_thread reference_genome_name
 
      Step3: get in directory reference/tba and run Multiple pairwise.
 
