@@ -26,7 +26,7 @@
 
      Step4: Calculating the score of each base.
 
-             python score-for-bases.py multiple_pairwise num_species
+             python score-for-bases.py multiple_alignment num_species
 			 
      Step5: Give a cutoff value to get CNSs according to the coverage of CDS in reference genome.
 	 
