@@ -1,7 +1,7 @@
 ##=======================================================================================================
 ##  This script used to extract shared cds and shared noncoding sequences from maf file.
 ##  Usage:
-##  python script.py *.maf cdsfile 
+##  python script.py *.maf cdsfile reference_genome_name
 ##  It will generates the results named *.cds_shared,*.noncoding_shared 
 ##=======================================================================================================
 
@@ -10,15 +10,35 @@
 
 import sys
 import os
+import argparse
+
+# Create the parser
+my_parser = argparse.ArgumentParser(prog='extract_shared_cds_or_noncoding_from_maf',
+                                    usage='%(prog)s [options] maf-file cds-file reference_genome_name',
+                                    description='This script used to extract shared cds and shared noncoding sequences from maf file',
+                                    epilog='Enjoy the program!')
+# Add the arguments
+my_parser.add_argument('maf_file',
+                       help='the maf format file of multiple alignment')
+my_parser.add_argument('cds-file',
+                       help='the cds file of reference species in bed format')
+my_parser.add_argument('reference_genome_name',
+                       help='the name of reference species')
+
+# Execute the parse_args() method
+args = my_parser.parse_args()
+
+
 
 target=sys.argv[1]
 cdsfile=sys.argv[2]
+reference_genome_name=sys.argv[3]
 q_name=os.path.basename(target)
 name=os.path.splitext(q_name)[0]
 
 os.system('maf-sort %s >sort-%s'%(target,name))
-os.system('''grep 'Osativa' sort-%s|awk '{print $2"\t"$3"\t"$3+$4}' >%s-Osativa.bed '''%(name,name))
-os.system('bedtools intersect -a %s-Osativa.bed -b %s >%s-intersect.bed'%(name,cdsfile,name))
+os.system('''grep %s sort-%s|awk '{print $2"\t"$3"\t"$3+$4}' >%s-%s.bed '''%(name,name,reference_genome_name))
+os.system('bedtools intersect -a %s-%s.bed -b %s >%s-intersect.bed'%(name,reference_genome_name,cdsfile,name))
 os.system('sort -k1,1 -k2,2n %s-intersect.bed >sort-%s-intersect.bed'%(name,name))
 os.system("sed -i '1d' sort-%s "%(name))
 os.system("sed -i '$d' sort-%s "%(name))
@@ -26,7 +46,7 @@ os.system("sed -i '/^#/d' sort-%s "%(name))
 
 
 def extract():
-    f1=open('%s-Osativa.bed'%(name),'r')
+    f1=open('%s-%s.bed'%(name,reference_genome_name),'r')
     f2=open('sort-%s-intersect.bed'%(name),'r')
     f3=open('%s.index'%(name),'w')
     f11=f1.readlines()

@@ -1,16 +1,25 @@
-##===============================================================================================================
- 
-##  Usage:
-##  python get-cns.py score-file CDS-file cutoff
-
-##===============================================================================================================
-
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
 from __future__ import division
 import sys
 import os
+import argparse
+
+# Create the parser
+my_parser = argparse.ArgumentParser(prog='get-cns',
+                                    usage='%(prog)s [options] score-file cds-file cutoff',
+                                    description='Get CNSs based on cutoff',
+                                    epilog='Enjoy the program!')
+# Add the arguments
+my_parser.add_argument('score-file',
+                       help='the score file of multiple alignment')
+my_parser.add_argument('cds-file',
+                       help='the cds file of reference species in bed format')
+my_parser.add_argument('cutoff',
+                       help='a cutoff value set to get CNSs')
+# Execute the parse_args() method
+args = my_parser.parse_args()
 
 target=sys.argv[1]
 q_name=os.path.basename(target)

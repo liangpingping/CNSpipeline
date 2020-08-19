@@ -6,40 +6,52 @@
 ## This script is used to deal with the reference genome
 ##
 ## Usages:
-##      python *.py reference_genome.fa
+##      python *.py reference_genome.fa reference_genome_name
 ##
 ## NB: based on last-759
-## this script will creat one directory name reference.
+## this script will creat one directory named reference.
 ## Dependencies: Biopython, LAST
 ##               
 ##---------------------------------------------------------------------------------------------
+import argparse
 import sys
 from Bio import SeqIO
 import os
 
-target=sys.argv[1]
-t_abspath=os.path.abspath(target)
-t_fullname=os.path.basename(target)
-t_name=os.path.splitext(t_fullname)[0]
+# Create the parser
+my_parser = argparse.ArgumentParser(prog='del-reference',
+                                    usage='%(prog)s [options] reference_genome reference_genome_name',
+                                    description='Deal with the reference genome',                                   
+                                    epilog='Enjoy the program!')
+# Add the arguments
+my_parser.add_argument('reference_genome',
+                       help='the genome sequences of reference species')
+my_parser.add_argument('reference_genome_name',
+                       help='the name of reference species')
+# Execute the parse_args() method
+args = my_parser.parse_args()
 
+
+target=sys.argv[1]
+reference_name=sys.argv[2]
 os.system('mkdir -p reference/Nib_t reference/tba')
 
-def deal_target():
-    tf1=open(target,'r')
+def deal_target(genome_file):
+    tf1=open(genome_file,'r')
     tf2=open('./reference/t1.fa','w')
-    tf22=open('./reference/tba/%s.fa'%(t_name),'w')
+    tf22=open('./reference/tba/%s.fa'%(reference_name),'w')
     for seq_record in SeqIO.parse(tf1,'fasta'):
 	id=str(seq_record.id)
         seq=str(seq_record.seq)
         length=str(len(seq))
-        tf2.write('>'+ t_name + '.'+ id +'\n'+ seq +'\n')
-        tf22.write('>'+ t_name + ':'+ id + ':' + '1' + ':' + '+' + ':' + length + '\n'+ seq +'\n')
+        tf2.write('>'+ reference_name + '.'+ id +'\n'+ seq +'\n')
+        tf22.write('>'+ reference_name + ':'+ id + ':' + '1' + ':' + '+' + ':' + length + '\n'+ seq +'\n')
     tf1.close()
     tf2.close()
     tf22.close()	
     os.system('fold -w 70 ./reference/t1.fa > ./reference/t.fa') 
-    os.system('fold -w 70 ./reference/tba/%s.fa >./reference/tba/%s'%(t_name,t_name)) 
-    os.system('rm ./reference/t1.fa ./reference/tba/%s.fa'%(t_name)) 
+    os.system('fold -w 70 ./reference/tba/%s.fa >./reference/tba/%s'%(reference_name,reference_name)) 
+    os.system('rm ./reference/t1.fa ./reference/tba/%s.fa'%(reference_name)) 
 	
 def lastdb():
     os.system('lastdb -uMAM8 -P10 ./reference/tdb  ./reference/t.fa \n' )
@@ -52,7 +64,7 @@ def trans():
     os.system('faSize ./reference/t.fa -detailed > ./reference/t.sizes')
 
 def main():
-    deal_target()
+    deal_target(target)
     lastdb()
     trans()
 

@@ -16,6 +16,25 @@ import sys
 import time
 import subprocess
 import math
+import argparse
+
+# Create the parser
+my_parser = argparse.ArgumentParser(prog='del-query',
+                                    usage='%(prog)s [options] query_genome threads reference_genome_name',
+                                    description='Deal with the query genome',
+                                    epilog='Enjoy the program!')
+# Add the arguments
+my_parser.add_argument('query_genome',
+                       help='the genome sequences of query species')
+my_parser.add_argument('threads',
+                       help='the number of threads')
+my_parser.add_argument('reference_genome_name',
+                       help='the name of reference species')
+
+# Execute the parse_args() method
+args = my_parser.parse_args()
+
+
 
 query=sys.argv[1]	
 q_abspath=os.path.abspath(query)
@@ -40,7 +59,7 @@ def deal_query():
     tf4.close()
     tf44.close()
     os.system('fold -w 70 ./%s/q1.fa >./%s/q.fa'%(q_name,q_name))
-    os.system('fold -w 70 ./reference/%s-multi> ./reference/%s'%(q_name,q_name))
+    os.system('fold -w 70 ./reference/%s-multi> ./reference/tba/%s'%(q_name,q_name))
     os.system('rm ./%s/q1.fa ./reference/%s-multi'%(q_name,q_name))
 	
 def faSplit():	
@@ -90,9 +109,9 @@ def others():
     os.system('bedtools merge -i ./%s/sort-%s.bed > ./%s/merge-sort-%s.bed'%(q_name,q_name,q_name,q_name))
     
     # Screen out
-    os.system('maf_sort ./%s/%s.maf  Osativa >./%s/%s.orig.maf'%(q_name,q_name,q_name,q_name))
-    os.system('single_cov2 ./%s/%s.orig.maf R=%s >./reference/tba/Osativa.%s.sing.maf'%(q_name,q_name,reference_genome_name,q_name))
-
+    os.system('maf_sort ./%s/%s.maf  %s >./%s/%s.orig.maf'%(q_name,q_name,reference_genome_name,q_name,q_name))
+    os.system('single_cov2 ./%s/%s.orig.maf R=%s >./reference/tba/%s.%s.sing.maf'%(q_name,q_name,reference_genome_name,reference_genome_name,q_name))
+    os.system('rm -r ./%s/Nib_q ./%s/chain ./%s/maf ./%s/%s.sam'%(q_name,q_name,q_name,q_name,q_name))
 def main():
     deal_query()
     faSplit()

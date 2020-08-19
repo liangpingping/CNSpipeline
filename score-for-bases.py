@@ -1,19 +1,23 @@
-##===============================================================================================================
-##     This script used to counting the score of every base from maf files,  we regard the bases of query species
-## which mismatch to the reference species as match spot. That is,once the sites in query species are not bases(-),
-## then we think it is aligned to the reference species.
- 
-##  Usage:
-##  python script.py *.maf num_species 
-##  It will generates the results named *-score.bed,*-score.wig
-##===============================================================================================================
-
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
 from __future__ import division
 import sys
 import os
+import argparse
+
+# Create the parser
+my_parser = argparse.ArgumentParser(prog='score-for-bases',
+                                    usage='%(prog)s [options] maf_file num_species',
+                                    description='Calculate score of every base from maf files, output file will be in bed and wig formats',
+                                    epilog='Enjoy the program!')
+# Add the arguments
+my_parser.add_argument('maf_file',
+                       help='the maf format file of multiple alignment')
+my_parser.add_argument('num_species',
+                       help='the number of species for multiple alignment')
+# Execute the parse_args() method
+args = my_parser.parse_args()
 
 target=sys.argv[1]
 q_name=os.path.basename(target)
