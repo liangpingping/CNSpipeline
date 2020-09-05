@@ -20,13 +20,13 @@
 
              python del-query.py query_genome.fa number_of_thread reference_genome_name
 
-     Step3: get in directory reference/tba and run Multiple pairwise.
+     Step3: cd to directory reference/tba and run Multiple pairwise.
 
-             roast X=0 E=reference-species species-guide-tree maf-source destination 
+             roast X=0 E=reference_genome_name species-guided-tree all_pairwise_alignment_file output_maf_file 
 
      Step4: Calculating the score of each base.
 
-             python score-for-bases.py multiple_alignment num_species
+             python score-for-bases.py maf_file num_species
 			 
      Step5: Give a cutoff value to get CNSs according to the coverage of CDS in reference genome.
 	 

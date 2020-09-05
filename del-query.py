@@ -101,7 +101,7 @@ def others():
 
     os.system('maf-convert sam ./%s/%s.maf >./%s/%s.sam'%(q_name,q_name,q_name,q_name))
     os.system('samtools view -bt ./reference/t.fa.fai ./%s/%s.sam>./%s/%s.bam'%(q_name,q_name,q_name,q_name))
-    os.system('samtools sort ./%s/%s.bam  ./%s/sort-%s'%(q_name,q_name,q_name,q_name))
+    os.system('samtools sort ./%s/%s.bam -o ./%s/sort-%s.bam'%(q_name,q_name,q_name,q_name))
     os.system('samtools index ./%s/sort-%s.bam'%(q_name,q_name))
 
     os.system('bamToBed -i ./%s/sort-%s.bam  > ./%s/%s.bed'%(q_name,q_name,q_name,q_name))

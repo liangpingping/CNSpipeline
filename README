@@ -1,0 +1,83 @@
+---------------------------------------------------------
+|       Examples commands to run CNSpipeline    |
+---------------------------------------------------------
+take data in this paper as example(https://academic.oup.com/gbe/article/10/2/473/4824837)
+
+There are 23 species as follows in total,and Osativa is the reference genome. 
+	Species name:
+		Taestivum,Turartu,Atauschii,Hvulgare,Bdistachyon,Pheterocycla,
+		Osativa,Oindica,Obrachyantha,Sviridis,Sitalica,Phallii,Pvirgatum,
+		Sbicolor,Zmays,Etef,Othomaeum,Acomosus,Pdactylifera,Eguineensis,
+		Macuminata,Spolyrhiza,Atrichopoda
+
+_________________________________________________________
+---------------------------------------------------------
+Step1: Prepare reference genome for subsequent alignment.                                              
+
+             python del-reference.py Osativa.fa Osativa
+
+Note: 
+this step will generate one directory and subdirectory named reference and tba seperately.
+_________________________________________________________
+---------------------------------------------------------
+
+_________________________________________________________
+---------------------------------------------------------
+Step2: Pairwise alignment and polish the alignment.
+
+             python del-query.py Taestivum.fa number_of_thread Osativa
+             python del-query.py Turartu.fa number_of_thread Osativa
+             python del-query.py Atauschii.fa number_of_thread Osativa
+             python del-query.py Hvulgare.fa number_of_thread Osativa
+             ...
+             ...
+             ...
+
+Note: 
+you have to run every non-reference species for this step, 
+and it will generate their corresponding directory named by species name.
+some buffer files keep in this directory, but the processed genome file and 
+pairwise alignment file moved to reference/tba directory for next step. 
+_________________________________________________________
+---------------------------------------------------------
+
+_________________________________________________________
+---------------------------------------------------------
+Step3: cd to directory reference/tba and run Multiple pairwise.
+
+             roast X=0 E=Osativa "(((((((((((Taestivum Turartu)Atauschii)Hvulgare)Bdistachyon)\
+	     Pheterocycla)((Osativa Oindica)Obrachyantha))((((Sviridis Sitalica)\
+             (Phallii Pvirgatum))(Sbicolor Zmays))(Etef Othomaeum)))Acomosus)\
+             ((Pdactylifera Eguineensis)Macuminata))Spolyrhiza)Atrichopoda)" *.sing.maf all-sing.maf
+
+Note: 
+for the species_guided_tree, it is a little different from NWK format. It seperated by space,
+and you have to use double quote for the tree.
+_________________________________________________________
+---------------------------------------------------------
+
+_________________________________________________________
+---------------------------------------------------------
+Step4: Calculating the score of each base.
+
+             python score-for-bases.py all-sing.maf num_species
+
+Note:
+num_species means the number of non-reference species in the maf file.
+output two files named all-sing.wig and all-sing.bed. 
+_________________________________________________________
+---------------------------------------------------------
+
+_________________________________________________________
+---------------------------------------------------------
+Step5: Give a cutoff value to get CNSs according to the coverage of CDS in reference genome.
+	 
+             python get-cns.py all-sing.bed CDS.bed cutoff
+
+Note:
+CDS.bed is the bed format file of reference species' coding sequences.
+cutoff value depends on the coding coverage of multiple alignment.
+So you have to calculate the CDS coverage with the increasing score value.
+prior cutoff value is the minmum score when CDS coverage reached to stable.
+_________________________________________________________
+---------------------------------------------------------
